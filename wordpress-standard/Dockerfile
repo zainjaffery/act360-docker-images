@@ -8,7 +8,7 @@ RUN apk add --no-cache \
     supervisor \
     # PHP build deps
     libzip-dev icu-dev oniguruma-dev freetype-dev libjpeg-turbo-dev libpng-dev \
-    libwebp-dev imagemagick-dev \
+    libwebp-dev imagemagick-dev linux-headers \
     # Runtime deps
     nodejs npm \
     mariadb-client \
