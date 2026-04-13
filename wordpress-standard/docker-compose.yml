@@ -28,7 +28,6 @@ services:
     volumes:
       - wordpress_data:/var/www/html:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/entrypoint.sh:/docker-entrypoint.d/99-auth.sh:ro
       - nginx_cache:/var/cache/nginx
     ports:
       - "80"
