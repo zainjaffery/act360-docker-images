@@ -22,5 +22,3 @@ else
     rm -f "$HTPASSWD_FILE"
     echo "Basic auth DISABLED (production)"
 fi
-
-exec nginx -g 'daemon off;'
