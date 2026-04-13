@@ -7,7 +7,8 @@ HTPASSWD_FILE="/etc/nginx/conf.d/.htpasswd"
 
 if [ "$ENVIRONMENT" != "production" ]; then
     # Generate htpasswd file (act360 / development)
-    printf "act360:$(openssl passwd -apr1 development)\n" > "$HTPASSWD_FILE"
+    # Pre-computed hash to avoid needing openssl in the container
+    printf 'act360:$apr1$YogpjUpM$lB6M6fenOQk0LfGyXGBcX/\n' > "$HTPASSWD_FILE"
 
     # Create auth config snippet that gets included by the main config
     cat > "$AUTH_CONF" <<'EOF'
