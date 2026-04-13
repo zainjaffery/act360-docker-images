@@ -83,9 +83,13 @@ RUN chmod 755 /usr/local/bin/fetch-keys.sh
 # ── Supervisor config (runs php-fpm + sshd) ──────────────────────────
 COPY supervisord.conf /etc/supervisord.conf
 
+# ── Entrypoint (downloads WP if needed, then starts supervisor) ──────
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # ── Working directory ────────────────────────────────────────────────
 WORKDIR /var/www/html
 
 EXPOSE 9000 22
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
