@@ -31,6 +31,7 @@ services:
       REDIS_PORT: 6379
       # SSH
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
+      SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
     volumes:
       # Mount the project root (parent of wordpress-bedrock/) into the container
       - ../:/var/www/html

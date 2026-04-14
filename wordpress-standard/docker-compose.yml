@@ -13,6 +13,7 @@ services:
       WORDPRESS_DB_USER: ${DB_USER:-wordpress}
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-change-this-password}
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
+      SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
     volumes:
       - wordpress_data:/var/www/html
     ports:
