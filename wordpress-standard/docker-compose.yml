@@ -15,7 +15,9 @@ services:
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
       SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
     volumes:
-      - wordpress_data:/var/www/html
+      # Mount project root (parent of wordpress-standard/) into the container
+      - ../:/var/www/html
+      - wp_uploads:/var/www/html/wp-content/uploads
     ports:
       - "22"
 
@@ -27,7 +29,8 @@ services:
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
     volumes:
-      - wordpress_data:/var/www/html:ro
+      - ../:/var/www/html:ro
+      - wp_uploads:/var/www/html/wp-content/uploads:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - nginx_cache:/var/cache/nginx
     ports:
@@ -61,6 +64,6 @@ services:
     command: redis-server --appendonly no --save "" --maxmemory 64mb --maxmemory-policy allkeys-lru
 
 volumes:
-  wordpress_data:
+  wp_uploads:
   db_data:
   nginx_cache:
