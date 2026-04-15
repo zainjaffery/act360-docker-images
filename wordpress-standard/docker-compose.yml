@@ -15,8 +15,8 @@ services:
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
       SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
     volumes:
-      # Mount project root (parent of wordpress-standard/) into the container
-      - ../:/var/www/html
+      # Mount the directory containing this compose file into the container
+      - ./:/var/www/html
       - wp_uploads:/var/www/html/wp-content/uploads
     ports:
       - "22"
@@ -29,7 +29,7 @@ services:
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
     volumes:
-      - ../:/var/www/html:ro
+      - ./:/var/www/html:ro
       - wp_uploads:/var/www/html/wp-content/uploads:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - nginx_cache:/var/cache/nginx
