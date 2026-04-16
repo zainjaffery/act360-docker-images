@@ -12,5 +12,13 @@ fi
 echo "Setting ownership on /var/www/html to www-data..."
 chown -R www-data:www-data /var/www/html
 
+# Persist SSH key fetcher env vars to a file so sshd's AuthorizedKeysCommand
+# subprocesses can read them (sshd does not pass container env vars through)
+cat > /etc/ssh-keys.env <<EOF
+SSH_KEYS_URL="${SSH_KEYS_URL:-}"
+SSH_KEYS_TOKEN="${SSH_KEYS_TOKEN:-}"
+EOF
+chmod 644 /etc/ssh-keys.env
+
 # Start supervisor (php-fpm + sshd)
 exec /usr/bin/supervisord -c /etc/supervisord.conf

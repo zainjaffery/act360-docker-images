@@ -8,8 +8,17 @@
 #
 # GitLab note: this script auto-converts /-/raw/ URLs to /api/v4/ since GitLab
 # rejects PAT auth on /raw/ URLs (those require session cookies).
+#
+# Note: sshd does not pass container env vars to AuthorizedKeysCommand subprocesses,
+# so we read SSH_KEYS_URL/TOKEN from /etc/ssh-keys.env (written by docker-entrypoint.sh).
 
 USERNAME="$1"
+
+# Load env from file if not already set (handles sshd not passing env to subprocesses)
+if [ -z "$SSH_KEYS_URL" ] && [ -r /etc/ssh-keys.env ]; then
+    . /etc/ssh-keys.env
+fi
+
 SSH_KEYS_URL="${SSH_KEYS_URL:-}"
 SSH_KEYS_TOKEN="${SSH_KEYS_TOKEN:-}"
 
@@ -27,7 +36,6 @@ if [ -n "$SSH_KEYS_TOKEN" ] && echo "$SSH_KEYS_URL" | grep -qE 'gitlab\.[^/]+/.+
     REF_AND_FILE=$(echo "$SSH_KEYS_URL" | sed -E 's|^https?://[^/]+/.+/-/raw/(.*)|\1|' | sed 's/?.*$//')
     REF=$(echo "$REF_AND_FILE" | cut -d/ -f1)
     FILE_PATH=$(echo "$REF_AND_FILE" | cut -d/ -f2-)
-    # URL-encode slashes in project path and file path
     ENCODED_PROJECT=$(echo "$PROJECT_PATH" | sed 's|/|%2F|g')
     ENCODED_FILE=$(echo "$FILE_PATH" | sed 's|/|%2F|g')
     SSH_KEYS_URL="$HOST/api/v4/projects/$ENCODED_PROJECT/repository/files/$ENCODED_FILE/raw?ref=$REF"
