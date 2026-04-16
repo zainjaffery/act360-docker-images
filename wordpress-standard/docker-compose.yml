@@ -19,7 +19,9 @@ services:
       - ./:/var/www/html
       - wp_uploads:/var/www/html/wp-content/uploads
     ports:
-      - "22"
+      # Pin the SSH host port via SSH_PORT env var (defaults to 2222).
+      # Use a unique value per site so your ~/.ssh/config entries stay stable.
+      - "${SSH_PORT:-2222}:22"
 
   nginx:
     image: nginx:alpine
