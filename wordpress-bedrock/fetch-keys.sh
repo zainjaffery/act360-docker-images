@@ -3,11 +3,11 @@
 # Fetches authorized SSH keys from a URL (GitHub raw, GitLab raw, or any URL)
 #
 # Set SSH_KEYS_URL to the raw URL of your keys file
-# For private GitLab repos, also set SSH_KEYS_TOKEN (Personal Access Token or Project Access Token with read_repository scope)
+# For private GitLab repos, also set SSH_KEYS_TOKEN (Personal/Project Access Token with read_repository scope)
 # For private GitHub repos, set SSH_KEYS_TOKEN (Personal Access Token with repo scope)
 #
-# Each line in the remote file can optionally include environment variables:
-# environment="GIT_AUTHOR_NAME=John Doe,GIT_AUTHOR_EMAIL=john@example.com" ssh-rsa AAAA... john@laptop
+# GitLab note: this script auto-converts /-/raw/ URLs to /api/v4/ since GitLab
+# rejects PAT auth on /raw/ URLs (those require session cookies).
 
 USERNAME="$1"
 SSH_KEYS_URL="${SSH_KEYS_URL:-}"
@@ -18,7 +18,22 @@ if [ -z "$SSH_KEYS_URL" ]; then
     exit 0
 fi
 
-# Build curl auth header based on URL host
+# For private GitLab raw URLs, convert to API endpoint that accepts PAT auth.
+# Pattern: https://gitlab.com/<group>/<project>/-/raw/<ref>/<path>?...
+#      -> https://gitlab.com/api/v4/projects/<url-encoded-group/project>/repository/files/<url-encoded-path>/raw?ref=<ref>
+if [ -n "$SSH_KEYS_TOKEN" ] && echo "$SSH_KEYS_URL" | grep -qE 'gitlab\.[^/]+/.+/-/raw/'; then
+    HOST=$(echo "$SSH_KEYS_URL" | sed -E 's|^(https?://[^/]+)/.*|\1|')
+    PROJECT_PATH=$(echo "$SSH_KEYS_URL" | sed -E 's|^https?://[^/]+/(.+)/-/raw/.*|\1|')
+    REF_AND_FILE=$(echo "$SSH_KEYS_URL" | sed -E 's|^https?://[^/]+/.+/-/raw/(.*)|\1|' | sed 's/?.*$//')
+    REF=$(echo "$REF_AND_FILE" | cut -d/ -f1)
+    FILE_PATH=$(echo "$REF_AND_FILE" | cut -d/ -f2-)
+    # URL-encode slashes in project path and file path
+    ENCODED_PROJECT=$(echo "$PROJECT_PATH" | sed 's|/|%2F|g')
+    ENCODED_FILE=$(echo "$FILE_PATH" | sed 's|/|%2F|g')
+    SSH_KEYS_URL="$HOST/api/v4/projects/$ENCODED_PROJECT/repository/files/$ENCODED_FILE/raw?ref=$REF"
+fi
+
+# Build auth header
 AUTH_HEADER=""
 if [ -n "$SSH_KEYS_TOKEN" ]; then
     if echo "$SSH_KEYS_URL" | grep -q "gitlab"; then
@@ -32,12 +47,13 @@ fi
 
 # Fetch keys
 if [ -n "$AUTH_HEADER" ]; then
-    curl -sfL --connect-timeout 5 --max-time 10 -H "$AUTH_HEADER" "$SSH_KEYS_URL" 2>/dev/null
+    RESULT=$(curl -sfL --connect-timeout 5 --max-time 10 -H "$AUTH_HEADER" "$SSH_KEYS_URL" 2>/dev/null)
 else
-    curl -sfL --connect-timeout 5 --max-time 10 "$SSH_KEYS_URL" 2>/dev/null
+    RESULT=$(curl -sfL --connect-timeout 5 --max-time 10 "$SSH_KEYS_URL" 2>/dev/null)
 fi
 
-# Fall back to local keys if fetch failed
-if [ $? -ne 0 ]; then
+if [ -n "$RESULT" ]; then
+    echo "$RESULT"
+else
     cat /root/.ssh/authorized_keys 2>/dev/null
 fi
