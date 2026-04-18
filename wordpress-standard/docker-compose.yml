@@ -14,6 +14,13 @@ services:
       WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-change-this-password}
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
       SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
+      # Auto SSH config registration
+      SITE_NAME: ${SITE_NAME:-}
+      SSH_PORT: ${SSH_PORT:-2222}
+      SSH_HOST: ${SSH_HOST:-}
+      SSH_CONFIG_REPO: ${SSH_CONFIG_REPO:-}
+      SSH_CONFIG_TOKEN: ${SSH_CONFIG_TOKEN:-}
+      SSH_CONFIG_FILE: ${SSH_CONFIG_FILE:-act360-dev}
     volumes:
       # Mount the directory containing this compose file into the container
       - ./:/var/www/html

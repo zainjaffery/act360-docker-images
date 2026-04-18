@@ -20,5 +20,10 @@ SSH_KEYS_TOKEN="${SSH_KEYS_TOKEN:-}"
 EOF
 chmod 644 /etc/ssh-keys.env
 
+# Auto-register SSH config in central repo (runs in background, non-blocking)
+if [ -n "$SITE_NAME" ] && [ -n "$SSH_CONFIG_REPO" ]; then
+    /usr/local/bin/register-ssh.sh &
+fi
+
 # Start supervisor (php-fpm + sshd)
 exec /usr/bin/supervisord -c /etc/supervisord.conf

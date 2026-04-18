@@ -81,6 +81,10 @@ RUN mkdir -p /var/run/sshd /root/.ssh && \
 COPY fetch-keys.sh /usr/local/bin/fetch-keys.sh
 RUN chmod 755 /usr/local/bin/fetch-keys.sh
 
+# ── SSH config auto-registration script ──────────────────────────────
+COPY register-ssh.sh /usr/local/bin/register-ssh.sh
+RUN chmod 755 /usr/local/bin/register-ssh.sh
+
 # ── Supervisor config (runs php-fpm + sshd) ──────────────────────────
 COPY supervisord.conf /etc/supervisord.conf
 
