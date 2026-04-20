@@ -20,10 +20,10 @@ services:
       SSH_HOST: ${SSH_HOST:-}
       SSH_CONFIG_REPO: ${SSH_CONFIG_REPO:-}
       SSH_CONFIG_TOKEN: ${SSH_CONFIG_TOKEN:-}
-      SSH_CONFIG_FILE: ${SSH_CONFIG_FILE:-act360-dev}
+      SSH_CONFIG_FILE: ${SSH_CONFIG_FILE:-dokploy}
     volumes:
-      # Mount the directory containing this compose file into the container
-      - ./:/var/www/html
+      # Mount the project root (parent of system/) into the container
+      - ../:/var/www/html
       - wp_uploads:/var/www/html/wp-content/uploads
     ports:
       # Pin the SSH host port via SSH_PORT env var (defaults to 2222).
@@ -38,7 +38,7 @@ services:
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
     volumes:
-      - ./:/var/www/html:ro
+      - ../:/var/www/html:ro
       - wp_uploads:/var/www/html/wp-content/uploads:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - nginx_cache:/var/cache/nginx
