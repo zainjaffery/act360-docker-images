@@ -10,6 +10,7 @@
 SITE_NAME="${SITE_NAME:-}"
 SSH_PORT="${SSH_PORT:-2222}"
 SSH_HOST="${SSH_HOST:-}"
+DB_LOCAL_PORT="${DB_LOCAL_PORT:-3306}"
 SSH_CONFIG_REPO="${SSH_CONFIG_REPO:-}"
 SSH_CONFIG_TOKEN="${SSH_CONFIG_TOKEN:-}"
 SSH_CONFIG_FILE="${SSH_CONFIG_FILE:-act360-dev}"
@@ -30,7 +31,7 @@ Host ${SITE_NAME}
     Port ${SSH_PORT}
     User root
     ProxyJump act360@${SSH_HOST}
-    LocalForward 3306 db:3306
+    LocalForward ${DB_LOCAL_PORT} db:3306
 # === END ${SITE_NAME} ==="
 
 # Clone the config repo

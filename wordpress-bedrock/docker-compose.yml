@@ -39,6 +39,7 @@ services:
       SSH_CONFIG_REPO: ${SSH_CONFIG_REPO:-}
       SSH_CONFIG_TOKEN: ${SSH_CONFIG_TOKEN:-}
       SSH_CONFIG_FILE: ${SSH_CONFIG_FILE:-dokploy}
+      DB_LOCAL_PORT: ${DB_LOCAL_PORT:-3306}
     volumes:
       # Mount the project root (parent of system/) into the container
       - ../:/var/www/html
