@@ -4,8 +4,6 @@ if [ ! -f /var/www/html/wp-login.php ]; then
     echo "WordPress not found, downloading..."
     wp core download --path=/var/www/html --allow-root
     echo "WordPress downloaded successfully"
-else
-    echo "WordPress already installed, skipping download"
 fi
 
 # Always ensure www-data owns the web root so PHP can write wp-config.php, uploads, etc.
@@ -19,6 +17,17 @@ SSH_KEYS_URL="${SSH_KEYS_URL:-}"
 SSH_KEYS_TOKEN="${SSH_KEYS_TOKEN:-}"
 EOF
 chmod 644 /etc/ssh-keys.env
+
+# Persist all env vars for SSH sessions (sshd does not pass container env to login shells)
+env | grep -E '^(WORDPRESS_|DB_|WP_|TABLE_PREFIX|REDIS_|SSH_|SITE_NAME)' > /etc/environment
+chmod 644 /etc/environment
+
+# Set default directory and source env for SSH login sessions
+cat > /root/.bashrc <<'BASHEOF'
+cd /var/www/html
+source /etc/environment 2>/dev/null
+export $(cut -d= -f1 /etc/environment 2>/dev/null) 2>/dev/null
+BASHEOF
 
 # Auto-register SSH config in central repo (runs in background, non-blocking)
 if [ -n "$SITE_NAME" ] && [ -n "$SSH_CONFIG_REPO" ]; then

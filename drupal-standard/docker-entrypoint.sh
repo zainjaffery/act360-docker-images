@@ -24,6 +24,17 @@ SSH_KEYS_TOKEN="${SSH_KEYS_TOKEN:-}"
 EOF
 chmod 644 /etc/ssh-keys.env
 
+# Persist all env vars for SSH sessions (sshd does not pass container env to login shells)
+env | grep -E '^(DB_|REDIS_|SSH_|SITE_NAME)' > /etc/environment
+chmod 644 /etc/environment
+
+# Set default directory and source env for SSH login sessions
+cat > /root/.bashrc <<'BASHEOF'
+cd /var/www/html
+source /etc/environment 2>/dev/null
+export $(cut -d= -f1 /etc/environment 2>/dev/null) 2>/dev/null
+BASHEOF
+
 # Auto-register SSH config in central repo (runs in background, non-blocking)
 if [ -n "$SITE_NAME" ] && [ -n "$SSH_CONFIG_REPO" ]; then
     /usr/local/bin/register-ssh.sh &
