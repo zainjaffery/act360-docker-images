@@ -76,6 +76,7 @@ RUN mkdir -p /var/run/sshd /root/.ssh && \
     sed -i 's/#PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
     sed -i 's/#PasswordAuthentication.*/PasswordAuthentication no/' /etc/ssh/sshd_config && \
     sed -i 's/^AllowTcpForwarding.*/AllowTcpForwarding yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PermitUserEnvironment.*/PermitUserEnvironment yes/' /etc/ssh/sshd_config && \
     echo "AuthorizedKeysCommand /usr/local/bin/fetch-keys.sh %u" >> /etc/ssh/sshd_config && \
     echo "AuthorizedKeysCommandUser nobody" >> /etc/ssh/sshd_config
 
