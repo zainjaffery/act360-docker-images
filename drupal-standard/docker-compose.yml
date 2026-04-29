@@ -7,6 +7,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - phpfpm
     environment:
       # Database
       DB_NAME: ${DB_NAME:-drupal}
