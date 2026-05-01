@@ -12,10 +12,10 @@ services:
         aliases:
           - phpfpm
     environment:
-      WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_NAME: ${DB_NAME:-wordpress}
-      WORDPRESS_DB_USER: ${DB_USER:-wordpress}
-      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD:-change-this-password}
+      DB_HOST: db
+      DB_NAME: ${DB_NAME:-wordpress}
+      DB_USER: ${DB_USER:-wordpress}
+      DB_PASSWORD: ${DB_PASSWORD:-change-this-password}
       SSH_KEYS_URL: ${SSH_KEYS_URL:-}
       SSH_KEYS_TOKEN: ${SSH_KEYS_TOKEN:-}
       # Auto SSH config registration
