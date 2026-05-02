@@ -32,6 +32,9 @@ Host ${SITE_NAME}
     User root
     ProxyJump act360@${SSH_HOST}
     LocalForward ${DB_LOCAL_PORT} db:3306
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+    LogLevel ERROR
 # === END ${SITE_NAME} ==="
 
 # Clone the config repo
