@@ -67,6 +67,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     mv wp-cli.phar /usr/local/bin/wp
 
 # ── SSH setup ────────────────────────────────────────────────────────
+# Set bash as default shell for SSH sessions
+RUN sed -i 's|root:x:0:0:root:/root:/bin/sh|root:x:0:0:root:/root:/bin/bash|' /etc/passwd
+
 RUN mkdir -p /var/run/sshd /root/.ssh && \
     ssh-keygen -A && \
     sed -i 's/#PermitRootLogin.*/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config && \
