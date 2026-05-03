@@ -1,6 +1,15 @@
 #!/bin/bash
-# Bedrock entrypoint: runs composer install if vendor/ is missing
 
+# Set up GitLab SSH key for Composer private repos
+if [ -n "$COMPOSER_SSH_KEY" ]; then
+    mkdir -p /root/.ssh
+    echo "$COMPOSER_SSH_KEY" | base64 -d > /root/.ssh/id_rsa
+    chmod 600 /root/.ssh/id_rsa
+    ssh-keyscan -t rsa gitlab.com >> /root/.ssh/known_hosts 2>/dev/null
+    echo "Composer SSH key installed"
+fi
+
+# Bedrock entrypoint: runs composer install if vendor/ is missing
 if [ -f /var/www/html/composer.json ] && [ ! -d /var/www/html/vendor ]; then
     echo "vendor/ not found, running composer install..."
     cd /var/www/html && composer install --no-dev --optimize-autoloader --no-interaction
@@ -37,6 +46,7 @@ source /etc/environment 2>/dev/null
 set +a
 BASHEOF
 cp /root/.bash_profile /root/.bashrc
+
 # Auto-register SSH config in central repo (runs in background, non-blocking)
 if [ -n "$SITE_NAME" ] && [ -n "$SSH_CONFIG_REPO" ]; then
     /usr/local/bin/register-ssh.sh &
