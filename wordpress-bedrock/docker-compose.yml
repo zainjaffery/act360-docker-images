@@ -60,8 +60,12 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+    environment:
+      WP_ENV: ${WP_ENV:-development}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
     volumes:
       - ../:/var/www/html:ro
+      - ./nginx/entrypoint.sh:/docker-entrypoint.d/99-auth.sh
       - bedrock_uploads:/var/www/html/web/app/uploads:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - nginx_cache:/var/cache/nginx
