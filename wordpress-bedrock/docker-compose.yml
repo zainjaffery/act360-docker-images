@@ -50,6 +50,8 @@ services:
       # Mount the project root (parent of system/) into the container
       - ../:/var/www/html
       - bedrock_uploads:/var/www/html/web/app/uploads
+      # Shared SSH key for Composer private repos
+      - /etc/dokploy/shared/ssh:/etc/shared-ssh:ro
     ports:
       # Pin the SSH host port via SSH_PORT env var (defaults to 2222).
       # Use a unique value per site so your ~/.ssh/config entries stay stable.

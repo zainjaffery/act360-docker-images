@@ -39,6 +39,8 @@ services:
       # Mount the project root (parent of system/) into the container
       - ../:/var/www/html
       - drupal_files:/var/www/html/web/sites/default/files
+      # Shared SSH key for Composer private repos
+      - /etc/dokploy/shared/ssh:/etc/shared-ssh:ro
     ports:
       - "${SSH_PORT:-2222}:22"
 

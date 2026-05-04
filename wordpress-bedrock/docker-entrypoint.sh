@@ -1,13 +1,19 @@
 #!/bin/bash
 
 # Set up GitLab SSH key for Composer private repos
-if [ -n "$COMPOSER_SSH_KEY" ]; then
-    mkdir -p /root/.ssh
+# Prefers shared volume at /etc/shared-ssh, falls back to COMPOSER_SSH_KEY env var
+mkdir -p /root/.ssh
+if [ -f /etc/shared-ssh/id_rsa ]; then
+    cp /etc/shared-ssh/id_rsa /root/.ssh/id_rsa
+    chmod 600 /root/.ssh/id_rsa
+    [ -f /etc/shared-ssh/known_hosts ] && cp /etc/shared-ssh/known_hosts /root/.ssh/known_hosts
+    echo "Composer SSH key loaded from shared volume"
+elif [ -n "$COMPOSER_SSH_KEY" ]; then
     echo "$COMPOSER_SSH_KEY" | base64 -d > /root/.ssh/id_rsa
     chmod 600 /root/.ssh/id_rsa
-    ssh-keyscan -t rsa gitlab.com >> /root/.ssh/known_hosts 2>/dev/null
-    echo "Composer SSH key installed"
+    echo "Composer SSH key loaded from env var"
 fi
+ssh-keyscan -t rsa,ed25519 gitlab.com >> /root/.ssh/known_hosts 2>/dev/null
 
 # Bedrock entrypoint: runs composer install if vendor/ is missing
 if [ -f /var/www/html/composer.json ] && [ ! -d /var/www/html/vendor ]; then
