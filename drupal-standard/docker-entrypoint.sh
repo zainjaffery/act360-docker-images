@@ -1,11 +1,19 @@
 #!/bin/bash
 
+
+# Source global shared env vars (SSH keys, config tokens, etc.)
+if [ -f /etc/shared/env ]; then
+    set -a
+    source /etc/shared/env
+    set +a
+    echo "Shared env vars loaded"
+fi
 # Set up GitLab SSH key for Composer private repos
 mkdir -p /root/.ssh
-if [ -f /etc/shared-ssh/id_rsa ]; then
-    cp /etc/shared-ssh/id_rsa /root/.ssh/id_rsa
+if [ -f /etc/shared/ssh/id_rsa ]; then
+    cp /etc/shared/ssh/id_rsa /root/.ssh/id_rsa
     chmod 600 /root/.ssh/id_rsa
-    [ -f /etc/shared-ssh/known_hosts ] && cp /etc/shared-ssh/known_hosts /root/.ssh/known_hosts
+    [ -f /etc/shared/ssh/known_hosts ] && cp /etc/shared/ssh/known_hosts /root/.ssh/known_hosts
     echo "Composer SSH key loaded from shared volume"
 elif [ -n "$COMPOSER_SSH_KEY" ]; then
     echo "$COMPOSER_SSH_KEY" | base64 -d > /root/.ssh/id_rsa

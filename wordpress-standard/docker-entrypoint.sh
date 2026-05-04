@@ -1,5 +1,13 @@
 #!/bin/bash
 # Download WordPress if not already present
+
+# Source global shared env vars (SSH keys, config tokens, etc.)
+if [ -f /etc/shared/env ]; then
+    set -a
+    source /etc/shared/env
+    set +a
+    echo "Shared env vars loaded"
+fi
 if [ ! -f /var/www/html/wp-login.php ]; then
     echo "WordPress not found, downloading..."
     wp core download --path=/var/www/html --allow-root
