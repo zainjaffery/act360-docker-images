@@ -3,7 +3,7 @@ FROM php:8.3-fpm-alpine
 # ── System dependencies ──────────────────────────────────────────────
 RUN apk add --no-cache \
     bash curl git unzip zip \
-    openssh-server \
+    openssh-server openssh-client \
     nginx \
     supervisor \
     # PHP build deps
