@@ -1,6 +1,8 @@
 #!/bin/bash
 # Download WordPress if not already present
 
+# Fix git ownership warning for bind-mounted repos
+git config --global --add safe.directory "*" 2>/dev/null || true
 # Source global shared env vars (SSH keys, config tokens, etc.)
 if [ -f /etc/shared/env ]; then
     set -a
