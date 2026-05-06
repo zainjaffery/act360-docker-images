@@ -28,8 +28,13 @@ ssh-keyscan -t rsa,ed25519 gitlab.com >> /root/.ssh/known_hosts 2>/dev/null
 # Bedrock entrypoint: runs composer install if vendor/ is missing
 if [ -f /var/www/html/composer.json ] && [ ! -d /var/www/html/vendor ]; then
     echo "vendor/ not found, running composer install..."
-    cd /var/www/html && composer install --no-dev --optimize-autoloader --no-interaction
-    echo "Composer install complete"
+    cd /var/www/html
+    if composer install --no-dev --optimize-autoloader --no-interaction; then
+        echo "Composer install complete"
+    else
+        echo "ERROR: composer install failed. Container will not start." >&2
+        exit 1
+    fi
 fi
 
 # Ensure uploads directory exists and is writable
