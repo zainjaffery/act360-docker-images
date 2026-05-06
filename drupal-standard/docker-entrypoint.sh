@@ -31,8 +31,11 @@ if [ -f /var/www/html/composer.json ] && [ ! -d /var/www/html/vendor ]; then
     if composer install --no-dev --optimize-autoloader --no-interaction; then
         echo "Composer install complete"
     else
-        echo "ERROR: composer install failed. Container will not start." >&2
-        exit 1
+        echo "================================================================" >&2
+        echo "ERROR: composer install FAILED. Site will be broken (no vendor/)." >&2
+        echo "SSH into the container, fix composer.json, run composer install," >&2
+        echo "then restart the container." >&2
+        echo "================================================================" >&2
     fi
 fi
 
