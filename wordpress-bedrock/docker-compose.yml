@@ -17,6 +17,7 @@ services:
       DB_USER: ${DB_USER:-wordpress}
       DB_PASSWORD: ${DB_PASSWORD:-change-this-password}
       DB_HOST: db
+      DB_PREFIX: ${DB_PREFIX:-wp_}
       # Bedrock environment config
       WP_ENV: ${WP_ENV:-development}
       WP_HOME: ${WP_HOME:-http://localhost}
